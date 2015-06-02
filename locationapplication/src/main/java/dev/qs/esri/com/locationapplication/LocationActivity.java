@@ -5,13 +5,40 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.esri.android.map.LocationDisplayManager;
+import com.esri.android.map.MapView;
+import com.esri.android.map.ags.ArcGISTiledMapServiceLayer;
+import com.esri.android.map.event.OnStatusChangedListener;
+
+
 
 public class LocationActivity extends ActionBarActivity {
 
+    MapView mMapView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
+        mMapView = (MapView) findViewById(R.id.map);
+
+        mMapView.addLayer(new ArcGISTiledMapServiceLayer(
+                "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"));
+
+        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
+
+            public void onStatusChanged(Object source, STATUS status) {
+                if (source == mMapView && status == STATUS.INITIALIZED) {
+
+                    LocationDisplayManager ldm = mMapView.getLocationDisplayManager();
+                    //ldm.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
+                    ldm.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
+                    ldm.start();
+
+                }
+
+            }
+
+        });
     }
 
 
